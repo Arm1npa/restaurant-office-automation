@@ -217,6 +217,16 @@ export const store = {
     notify();
   },
 
+  markReferralRead: (referralId: string): void => {
+    const referral = state.referrals.find(r => r.id === referralId);
+    if (!referral || referral.readAt) return;
+    referral.readAt = new Date().toISOString();
+    referral.status = 'READ';
+    state.timeline.push({ id: uuidv4(), letterId: referral.letterId, action: 'READ', description: 'نامه مشاهده شد', userId: referral.toUserId, createdAt: new Date().toISOString() });
+    state.auditLogs.push({ id: uuidv4(), userId: referral.toUserId, action: 'READ_DOCUMENT', entityType: 'Letter', entityId: referral.letterId, description: 'مشاهده نامه', ipAddress: '192.168.1.1', userAgent: navigator.userAgent, createdAt: new Date().toISOString() });
+    notify();
+  },
+
   approveLetter: (letterId: string, comment?: string): void => {
     if (!state.currentUser) return;
     const letter = state.letters.find(l => l.id === letterId);

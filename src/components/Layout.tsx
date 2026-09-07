@@ -1,11 +1,13 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { store, useStore } from '../store';
+import { useTheme } from '../contexts/ThemeContext';
 import { toPersianNumber } from '../utils';
-import { Home, Inbox, Send, FileText, CheckSquare, Archive, GitBranch, Users, Building2, ScrollText, Bell, LogOut, Menu, X } from 'lucide-react';
+import { Home, Inbox, Send, FileText, CheckSquare, Archive, GitBranch, Users, Building2, ScrollText, Bell, LogOut, Menu, X, Sun, Moon } from 'lucide-react';
 import { useState } from 'react';
 
 export default function Layout() {
   const { currentUser, notifications } = useStore();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const unreadCount = notifications.filter(n => n.userId === currentUser?.id && !n.isRead).length;
@@ -27,25 +29,25 @@ export default function Layout() {
   ];
 
   return (
-    <div className="flex h-screen bg-slate-50 overflow-hidden">
+    <div className="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden transition-colors duration-200">
       {/* Mobile overlay */}
       {sidebarOpen && <div className="fixed inset-0 bg-black/40 z-40 lg:hidden" onClick={() => setSidebarOpen(false)} />}
       
       {/* Sidebar */}
-      <aside className={`fixed lg:static inset-y-0 right-0 z-50 w-64 bg-white border-l border-slate-200 flex flex-col transform transition-transform duration-200 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
-        <div className="p-4 border-b border-slate-200">
+      <aside className={`fixed lg:static inset-y-0 right-0 z-50 w-64 bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col transform transition-all duration-200 ${sidebarOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}`}>
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 bg-primary-600 rounded-lg flex items-center justify-center">
                 <FileText className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h1 className="font-bold text-sm text-slate-800">اتوماسیون اداری</h1>
-                <p className="text-[10px] text-slate-500">مجموعه رستورانی</p>
+                <h1 className="font-bold text-sm text-slate-800 dark:text-slate-100">اتوماسیون اداری</h1>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400">مجموعه رستورانی</p>
               </div>
             </div>
-            <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 rounded hover:bg-slate-100">
-              <X className="w-5 h-5 text-slate-500" />
+            <button onClick={() => setSidebarOpen(false)} className="lg:hidden p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700">
+              <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
             </button>
           </div>
         </div>
@@ -53,7 +55,7 @@ export default function Layout() {
         <nav className="flex-1 overflow-y-auto p-3 space-y-1">
           {navItems.map((item) => (
             <NavLink key={item.to} to={item.to} end={item.end} onClick={() => setSidebarOpen(false)}
-              className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${isActive ? 'bg-primary-50 text-primary-700 font-medium' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}>
+              className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${isActive ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 font-medium' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:text-slate-900 dark:hover:text-slate-100'}`}>
               <item.icon className="w-4.5 h-4.5" />
               <span>{item.label}</span>
               {item.badge ? <span className="mr-auto bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">{toPersianNumber(item.badge)}</span> : null}
@@ -61,16 +63,16 @@ export default function Layout() {
           ))}
         </nav>
         
-        <div className="p-3 border-t border-slate-200">
+        <div className="p-3 border-t border-slate-200 dark:border-slate-700">
           <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center text-primary-700 font-bold text-xs">
+            <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center text-primary-700 dark:text-primary-300 font-bold text-xs">
               {currentUser?.firstName[0]}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-800 truncate">{currentUser?.firstName} {currentUser?.lastName}</p>
-              <p className="text-[10px] text-slate-500 truncate">{currentUser?.email}</p>
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-100 truncate">{currentUser?.firstName} {currentUser?.lastName}</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400 truncate">{currentUser?.email}</p>
             </div>
-            <button onClick={handleLogout} className="p-1.5 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600 transition-colors" title="خروج">
+            <button onClick={handleLogout} className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors" title="خروج">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -79,14 +81,17 @@ export default function Layout() {
 
       {/* Main content */}
       <main className="flex-1 flex flex-col overflow-hidden">
-        <header className="h-14 bg-white border-b border-slate-200 flex items-center px-4 gap-4 shrink-0">
-          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-slate-100">
-            <Menu className="w-5 h-5 text-slate-600" />
+        <header className="h-14 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-center px-4 gap-4 shrink-0 transition-colors duration-200">
+          <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+            <Menu className="w-5 h-5 text-slate-600 dark:text-slate-300" />
           </button>
           <div className="flex-1" />
           <div className="flex items-center gap-2">
-            <button onClick={() => navigate('/notifications')} className="relative p-2 rounded-lg hover:bg-slate-100">
-              <Bell className="w-5 h-5 text-slate-500" />
+            <button onClick={toggleTheme} className="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" title={theme === 'light' ? 'حالت شب' : 'حالت روز'}>
+              {theme === 'light' ? <Moon className="w-5 h-5 text-slate-500 dark:text-slate-400" /> : <Sun className="w-5 h-5 text-slate-400" />}
+            </button>
+            <button onClick={() => navigate('/notifications')} className="relative p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+              <Bell className="w-5 h-5 text-slate-500 dark:text-slate-400" />
               {unreadCount > 0 && <span className="absolute top-1 left-1 w-2 h-2 bg-red-500 rounded-full" />}
             </button>
           </div>
